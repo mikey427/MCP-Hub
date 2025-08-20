@@ -1,0 +1,14 @@
+{
+  "weather": {
+    "name": "Weather MCP",
+    "description": "Example",
+    "command": "example/example",
+    "args": "examples args"
+  },
+  "fileSystem": {
+    "name": "File System MCP",
+    "description": "Example",
+    "command": "example/example",
+    "args": "examples args"
+  }
+}
