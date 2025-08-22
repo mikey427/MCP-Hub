@@ -1,0 +1,18 @@
+{
+  "name": "@mcp-hub/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "mcp-hub": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -b",
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@mcp-hub/shared": "0.1.0",
+    "commander": "^14.0.0"
+  }
+}
