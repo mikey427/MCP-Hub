@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc -b",
-    "dev": "tsx src/index.ts"
+    "dev": "tsx index.ts"
   },
   "dependencies": {
     "@mcp-hub/shared": "0.1.0",

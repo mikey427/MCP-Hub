@@ -1,67 +1,69 @@
-#!/usr/bin/env node
-
-import { program } from "commander";
-// import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import express from "express";
-import http from "http";
-import { WebSocketServer } from "ws";
+import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { randomUUID } from "crypto";
+import { Anthropic } from "@anthropic-ai/sdk";
+import {
+  MessageParam,
+  Tool,
+} from "@anthropic-ai/sdk/resources/messages/messages.mjs";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import readline from "readline/promises";
+import dotenv from "dotenv";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 
-program
-  .version("1.0.0")
-  .description("My Node CLI")
-  .option("-n, --name <type>", "Add your name")
-  .action((options) => {
-    if (options.name) console.log(`Hey, ${options.name}!`);
-  });
+// dotenv.config();
 
-program.parse(process.argv);
+// // const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+// // if (!ANTHROPIC_API_KEY) {
+// //   throw new Error("ANTHROPIC_API_KEY is not set");
+// // }
 
-// const testMcp = new McpServer({
-//   name: "My MCP Server",
-//   version: "1.0.0",
-//   description: "My MCP Server Description",
-//   resources: {},
-//   tools: {},
-//   prompts: {},
-// });
+// class MCPClient {
+//   private mcp: Client;
+//   private anthropic: Anthropic;
+//   private transport: StdioClientTransport | null = null;
+//   private tools: Tool[] = [];
+
+//   constructor() {
+//     this.anthropic = new Anthropic({
+//       // apiKey: ANTHROPIC_API_KEY,
+//     });
+//     this.mcp = new Client({ name: "mcp-client-cli", version: "1.0.0" });
+//   }
+//   // methods will go here
+// }
+
+const server = new McpServer({
+  name: "test",
+  version: "1.0.0",
+  capabilities: {
+    resources: {},
+    tools: {},
+    prompts: {},
+  },
+});
 
 async function main() {
-  const app = express();
-  app.get("/", (_req, res) => res.send("MCP Server running"));
+  // const transport = new StreamableHTTPServerTransport({
+  //   sessionIdGenerator: () => randomUUID(),
+  // });
 
-  const httpServer = http.createServer(app);
-  const wss = new WebSocketServer({ server: httpServer, path: "/mcp" });
-
-  wss.on("connection", (ws) => {
-    // Incoming messages from client
-    ws.on("message", async (raw) => {
-      try {
-        const msg = JSON.parse(raw.toString());
-        console.log("Received message:", msg);
-        // TODO: pass into SDK’s request/notification handler
-        // const response = await serverCore.handleMessage(msg);
-        // if (response) ws.send(JSON.stringify(response));
-      } catch (e) {
-        ws.send(JSON.stringify({ error: "Invalid JSON" }));
-      }
-    });
-
-    // Example: send a welcome notification (adjust to protocol structure)
-    ws.send(
-      JSON.stringify({
-        jsonrpc: "2.0",
-        method: "welcome",
-        params: { server: "My MCP Server" },
-      })
-    );
-  });
-
-  const port = Number(process.env.PORT || 3000);
-  httpServer.listen(port, () =>
-    console.log(
-      `MCP HTTP/WebSocket server listening on http://localhost:${port} (WS path /mcp)`
-    )
-  );
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  // const app = express();
+  // const port = 3000;
+  // app.use(express.json());
+  // app.all("/mcp", (req, res) => {
+  //   transport.handleRequest(req, res);
+  // });
+  // app.get("/", (req, res) => {
+  //   res.send("MCP Server running!");
+  // });
+  // app.listen(port, () => {
+  //   console.log(`MCP Server listening on port ${port}`);
+  // });
 }
 
 main();

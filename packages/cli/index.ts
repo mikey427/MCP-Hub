@@ -4,7 +4,7 @@ import fs from "fs";
 async function main() {
   console.log("hello from MCP Hub!");
 
-  const rawServerData = fs.readFileSync("./servers.JSON", "utf8");
+  const rawServerData = fs.readFileSync("../../servers.json", "utf8");
   const mcpServers = JSON.parse(rawServerData);
   console.log(mcpServers);
 }
